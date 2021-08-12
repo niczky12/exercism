@@ -51,3 +51,24 @@ function decode(input)
     map(rotate, clean(input))
 end
 
+
+# alternative solution
+clean(s::String) = replace(lowercase(s), r"\W" => "")
+map_blocks = input -> join(map(String, Iterators.partition(input, 5)), ' ')
+
+alphabet = 'a':'z'
+cipher = Dict(zip(alphabet, reverse(alphabet)))
+apply_cipher(input) = map(c -> get(cipher, c, c), input)
+
+function decode(input)
+    input |>
+    clean |>
+    apply_cipher
+end
+
+function encode(input)
+    input |>
+    clean |>
+    apply_cipher |>
+    map_blocks
+end
