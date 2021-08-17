@@ -21,23 +21,14 @@ value_to_letters = Dict(
 )
 
 
-letter_to_value = Dict{Char, Int}()
+scores = Dict{Char, Int}()
 
 for (value, letters) in value_to_letters
     for letter in letters
-        letter_to_value[letter] = value
+        scores[letter] = value
     end
 end
 
-function score(str)
-    score_letter(c::Char)::Int64 = get(letter_to_value, c, 0)
+score(str) = mapreduce(letter -> get(scores, letter, 0), +, uppercase(str), init=0)
 
-    score = 0
-
-    for letter in uppercase(str)
-        score += score_letter(letter)
-    end
-    return score
-end
-
-
+score("hello")
