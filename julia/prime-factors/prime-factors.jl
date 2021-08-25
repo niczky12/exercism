@@ -1,9 +1,10 @@
 using BenchmarkTools
+import Random
 
 # super simple reursive solution
 function prime_factors(n)
     if n == 1
-        return Vector{Int64}()
+        return empty([n])
     end
 
     for i in 2:n
@@ -13,15 +14,15 @@ function prime_factors(n)
     end
 end
 
-prime_factors(2^5 * 7 * 13 * 5 * 31)
 
+# slightly more elegant recursive solution
+function prime_factors2(n, i)
+    n == 1 && return empty([n])
 
-function prime_factors2(n, up_to)
-
-    if n % up_to == 0
-        return vcat([up_to], prime_factors2(n ÷ up_to, up_to))
-    elseif up_to <= sqrt(n)
-        return prime_factors2(n, up_to+1)
+    if n % i == 0
+        return vcat([i], prime_factors2(n ÷ i, i))
+    elseif i <= sqrt(n)
+        return prime_factors2(n, i+1)
     else
         return [n]
     end
@@ -29,5 +30,24 @@ end
 
 prime_factors2(n) = prime_factors2(n, 2)
 
-prime_factors2(2^5 * 7 * 13 * 5 * 31)
-prime_factors2(31)
+
+# built in solution
+import Primes
+
+prime_factors3(n) = Primes.factor(Vector, n)
+
+Random.seed!(1234)
+candidates = rand(10_000:100_000, 100)
+
+# this is about 10x slower than anything
+@benchmark prime_factors.(candidates)
+@benchmark prime_factors2.(candidates)
+@benchmark prime_factors3.(candidates)
+
+
+Random.seed!(1234)
+candidates = rand(10_000:100_000_000, 10000)
+
+@benchmark prime_factors2.(candidates)
+# built in is 10x faster
+@benchmark prime_factors3.(candidates)
