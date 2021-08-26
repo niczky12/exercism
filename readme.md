@@ -1,4 +1,4 @@
-# Collection Exercism.io solutions
+# Collection of Exercism.io solutions
 
 I store my solutions to exercism.io challenges here.
 
