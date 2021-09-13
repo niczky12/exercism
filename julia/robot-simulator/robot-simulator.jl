@@ -1,4 +1,3 @@
-# not sure why we would need a struct for this...
 struct Point{T<:Real}
     x::T
     y::T
@@ -8,10 +7,16 @@ struct Point{T<:Real}
 end
 
 
-struct Robot
+mutable struct Robot
     position::Point
     heading::Point
+
+    function Robot(p::Tuple{T, T}, heading::Point) where T <: Real
+        new(Point(p...), heading)
+    end
 end
+
+
 
 position(r::Robot) = r.position
 heading(r::Robot) = r.heading
@@ -35,9 +40,9 @@ function rotate(p::Point, direction::Symbol)
 end
   
   
-advance!(r::Robot) = (r.position += r.heading)
-turn_right!(r::Robot) = (r.position = rotate(r.position, :right))
-turn_left!(r::Robot) = (r.position = rotate(r.position, :left))
+advance!(r::Robot) = (r.position += r.heading; r)
+turn_right!(r::Robot) = (r.heading = rotate(r.heading, :right); r)
+turn_left!(r::Robot) = (r.heading = rotate(r.heading, :left); r)
 
 
 const NORTH = Point(0, 1)
@@ -62,9 +67,9 @@ const WEST = rotate(SOUTH, :right)
 
 function move!(r::Robot, instructions::String)
     instructions_map = Dict(
-        'A': advance!,
-        'R': turn_right!,
-        'L': turn_left!
+        'A' => advance!,
+        'R' => turn_right!,
+        'L' => turn_left!
     )
 
     foreach(k -> instructions_map[k](r), instructions)
