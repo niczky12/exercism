@@ -1,37 +1,27 @@
 
-using Test
+function rotate(r::Integer, c::AbstractChar)::AbstractChar
 
-function rotate(r::Int, c::Char)::Char
-
-    n = Int(c)
-
-    if Int('a') <= Int(c) <= Int('z')
-        new_n = (Int(c) - Int('a') + r) % 26
-        return Char(Int('a') + new_n)
-    elseif Int('A') <= Int(c) <= Int('Z')
-        new_n = (Int(c) - Int('A') + r) % 26
-        return Char(Int('A') + new_n)
+    if c in 'a':'z'
+        new_n = 'a' + (c - 'a' + r) % 26
+    elseif c in 'A':'Z'
+        new_n = 'A' + (c - 'A' + r) % 26
+    else
+        new_n = c
     end
 
-    return c
+    return new_n
 end
 
+rotate(r::Integer, s::AbstractString)::AbstractString = map(c -> rotate(r, c), s)
+
+# macro with the key at the end
+macro R_str(s, r::Integer)
+    rotate(r, s)
+end
+
+@assert R"hello"12 == rotate(12, "hello")
 
 
-@test rotate(26, 'a') == 'a'
-@test rotate(12, '1') == '1'
-@test rotate(3, 'a') == 'd'
-@test rotate(-1, 'B') == 'A'
-@test rotate(26, 'B') == 'B'
-@test rotate(28, 'B') == 'D'
-@test rotate(12323, '!') == '!'
-@test rotate(12323, ' ') == ' '
-
-rotate(r::Int, s::String)::String = map(c -> rotate(r, c), s)
-
-@test rotate(0, "hello") == "hello"
-@test rotate(26, "my name is") == "my name is"
-@test rotate(2, "abc") == "cde"
 
 # define macros
 for i in 0:26
@@ -42,5 +32,3 @@ for i in 0:26
         end
     end
 end
-
-@test R1"abc" == "bcd"
