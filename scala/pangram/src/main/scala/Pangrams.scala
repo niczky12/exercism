@@ -5,8 +5,3 @@ object Pangrams {
       all_chars.diff(input_chars).isEmpty
   }
 }
-
-// more scala-esque solution without sets
-// object Pangrams {
-//   def isPangram(sentence: String): Boolean = ('a' to 'z').forall(sentence.toLowerCase.contains(_))
-// }
